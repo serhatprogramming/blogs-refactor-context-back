@@ -11,7 +11,6 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response, next) => {
   try {
     const body = request.body;
-
     const user = request.user;
     const blog = new Blog({
       title: body.title,
@@ -24,6 +23,21 @@ blogsRouter.post("/", async (request, response, next) => {
     user.blogs = user.blogs.concat(result._id);
     await user.save();
     response.status(201).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogsRouter.delete("/:id", async (request, response, next) => {
+  try {
+    const user = request.user;
+    const blog = await Blog.findById(request.params.id);
+    if (user.id === blog.user.toString()) {
+      await Blog.findByIdAndDelete(request.params.id);
+      response.status(204).end();
+    } else {
+      response.status(400).json({ error: "invalid user" });
+    }
   } catch (error) {
     next(error);
   }
