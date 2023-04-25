@@ -24,6 +24,9 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtractor = async (request, response, next) => {
+  if (request.token === null) {
+    return response.status(401).json({ error: "token is missing or invalid" });
+  }
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
   if (!decodedToken.id) {
     return response.status(401).json({ error: "token invalid" });
@@ -45,7 +48,6 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === "JsonWebTokenError") {
     return response.status(400).json({ error: error.message });
   }
-
   next(error);
 };
 
