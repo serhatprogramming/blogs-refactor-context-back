@@ -10,6 +10,7 @@ const blogsRouter = require("./controllers/blogs");
 const usersRouter = require("./controllers/users");
 const mongoose = require("mongoose");
 const loginRouter = require("./controllers/login");
+const commentsRouter = require("./controllers/comments");
 
 const mongoUrl = config.MONGODB_URI;
 mongoose.connect(mongoUrl);
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
 app.use("/api/blogs", middleware.userExtractor, blogsRouter);
+app.use("/api/blogs", commentsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 
